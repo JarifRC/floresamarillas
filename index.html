@@ -1,260 +1,426 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Una sorpresa para ti 💛</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Ti 🌻✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      background-color: #0b0b10;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      position: relative;
-    }
+        body {
+            background: #0a0813;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
 
-    /* PANTALLA 1: CARTA */
-    .card-screen {
-      text-align: center;
-      z-index: 10;
-      transition: opacity 0.8s ease, transform 0.8s ease;
-    }
+        /* Fondo dinámico y partículas */
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
 
-    .envelope-box {
-      width: 180px;
-      height: 120px;
-      background: linear-gradient(135deg, #ff6b81, #ff4757);
-      border-radius: 12px;
-      margin: 0 auto 25px auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 10px 25px rgba(255, 71, 87, 0.3);
-      position: relative;
-      cursor: pointer;
-      animation: float 3s ease-in-out infinite;
-    }
+        .bg-glow {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, rgba(255, 165, 0, 0.05) 50%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            z-index: 1;
+            animation: pulseGlow 4s infinite alternate ease-in-out;
+        }
 
-    .envelope-icon {
-      font-size: 50px;
-    }
+        @keyframes pulseGlow {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 0.9; }
+        }
 
-    .btn-open {
-      background: linear-gradient(45deg, #ffd700, #ffa500);
-      color: #000;
-      border: none;
-      padding: 14px 32px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 30px;
-      cursor: pointer;
-      box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
+        /* Contenedor Principal */
+        .container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 420px;
+            padding: 20px;
+        }
 
-    .btn-open:active {
-      transform: scale(0.95);
-    }
+        /* --- FASE 1: SOBRE --- */
+        .envelope-wrapper {
+            position: relative;
+            width: 280px;
+            height: 190px;
+            background: #e63946;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(230, 57, 70, 0.3);
+            perspective: 1000px;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
 
-    /* PANTALLA 2: FLORES */
-    .flowers-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 1.5s ease;
-    }
+        .envelope-wrapper::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 140px solid #d62828;
+            border-right: 140px solid #d62828;
+            border-top: 95px solid transparent;
+            border-bottom: 95px solid #bd1e2e;
+            border-radius: 0 0 12px 12px;
+            z-index: 3;
+        }
 
-    .flowers-screen.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
+        .envelope-wrapper .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-top: 105px solid #e63946;
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out;
+            z-index: 4;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+        }
 
-    .svg-container {
-      width: 280px;
-      height: 280px;
-      animation: pulseGlow 3s ease-in-out infinite alternate;
-    }
+        .envelope-wrapper .seal {
+            position: absolute;
+            top: 85px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 45px;
+            height: 45px;
+            background: radial-gradient(circle, #ffd700 0%, #b8860b 100%);
+            border-radius: 50%;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 20px;
+            transition: opacity 0.4s;
+        }
 
-    h1 {
-      color: #ffe066;
-      font-size: 24px;
-      margin-top: 20px;
-      text-shadow: 0 0 10px rgba(255, 224, 102, 0.5);
-      letter-spacing: 1px;
-    }
+        /* Botón de apertura único */
+        .btn-open {
+            margin-top: 40px;
+            padding: 14px 42px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1a0f00;
+            background: linear-gradient(135deg, #ffe066 0%, #ffd700 50%, #ffa500 100%);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 20;
+            outline: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    /* EFECTOS DE DESTELLOS */
-    .sparkle {
-      position: absolute;
-      background: radial-gradient(circle, #fff 10%, #ffd700 80%, transparent 100%);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: sparkleAnim linear infinite;
-    }
+        .btn-open:active {
+            transform: scale(0.95);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+        }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+        /* --- FASE 2: CARTA Y FLORES --- */
+        .card-content {
+            position: absolute;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8) translateY(30px);
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    @keyframes pulseGlow {
-      0% { transform: scale(0.98); filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.3)); }
-      100% { transform: scale(1.02); filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.6)); }
-    }
+        /* SVG Animación de Flores */
+        .flowers-svg {
+            width: 280px;
+            height: 240px;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+        }
 
-    @keyframes sparkleAnim {
-      0% { transform: translateY(0) scale(0); opacity: 0; }
-      50% { opacity: 1; }
-      100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
-    }
-  </style>
+        .stem {
+            stroke-dasharray: 200;
+            stroke-dashoffset: 200;
+            animation: growStem 2s forwards ease-out 0.3s;
+        }
+
+        .leaf {
+            transform: scale(0);
+            transform-origin: center;
+            animation: popLeaf 0.8s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275) 1.2s;
+        }
+
+        .petal {
+            transform: scale(0);
+            transform-origin: center;
+            animation: popPetal 0.6s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .center-flower {
+            transform: scale(0);
+            transform-origin: center;
+            animation: popLeaf 0.6s forwards ease-out 1.5s;
+        }
+
+        @keyframes growStem {
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes popLeaf {
+            to { transform: scale(1); }
+        }
+
+        @keyframes popPetal {
+            to { transform: scale(1); }
+        }
+
+        /* Texto de la Carta */
+        .letter-card {
+            background: rgba(20, 15, 35, 0.85);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(255, 215, 0, 0.1);
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .letter-title {
+            font-family: 'Caveat', cursive;
+            font-size: 2.3rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        .letter-body {
+            color: #f0e6d2;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        .letter-heart {
+            font-size: 1.5rem;
+            color: #ffd700;
+            animation: heartBeat 1.5s infinite alternate;
+            display: inline-block;
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.25); filter: drop-shadow(0 0 8px #ffd700); }
+        }
+
+        /* Estado abierto */
+        .open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .open .seal {
+            opacity: 0;
+        }
+
+        .open .envelope-wrapper {
+            transform: translateY(120px) scale(0.5);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .open .btn-open {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+
+        .open .card-content {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateY(0);
+            transition-delay: 0.5s;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- PANTALLA DE LA CARTA -->
-  <div class="card-screen" id="cardScreen">
-    <div class="envelope-box" onclick="openCard()">
-      <div class="envelope-icon">✉️</div>
+    <canvas id="particles-canvas"></canvas>
+    <div class="bg-glow"></div>
+
+    <div class="container" id="mainContainer">
+        <!-- FASE 1: SOBRE DE CARTA -->
+        <div class="envelope-wrapper" id="envelope">
+            <div class="flap"></div>
+            <div class="seal">✨</div>
+        </div>
+
+        <button class="btn-open" id="openBtn" onclick="openLetter()">Abrir 💛</button>
+
+        <!-- FASE 2: FLORES Y CARTA -->
+        <div class="card-content" id="cardContent">
+            <!-- SVG de Flores Amarillas con animación -->
+            <svg class="flowers-svg" viewBox="0 0 300 260">
+                <!-- Tallos -->
+                <path class="stem" d="M150 240 Q 145 180 150 110" stroke="#2d6a4f" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <path class="stem" d="M150 200 Q 110 170 90 120" stroke="#1b4332" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <path class="stem" d="M150 200 Q 190 170 210 120" stroke="#1b4332" stroke-width="5" fill="none" stroke-linecap="round"/>
+
+                <!-- Hojas -->
+                <path class="leaf" d="M148 180 Q 110 170 120 195 Q 140 200 148 180" fill="#40916c"/>
+                <path class="leaf" d="M152 180 Q 190 170 180 195 Q 160 200 152 180" fill="#40916c"/>
+
+                <!-- Flor Izquierda -->
+                <g transform="translate(90, 120)">
+                    <circle class="center-flower" cx="0" cy="0" r="16" fill="#5c3d11"/>
+                    <!-- Pétalos -->
+                    <g fill="#ffc300">
+                        <ellipse class="petal" cx="0" cy="-24" rx="6" ry="12" style="animation-delay: 1.4s;"/>
+                        <ellipse class="petal" cx="17" cy="-17" rx="6" ry="12" transform="rotate(45)" style="animation-delay: 1.45s;"/>
+                        <ellipse class="petal" cx="24" cy="0" rx="6" ry="12" transform="rotate(90)" style="animation-delay: 1.5s;"/>
+                        <ellipse class="petal" cx="17" cy="17" rx="6" ry="12" transform="rotate(135)" style="animation-delay: 1.55s;"/>
+                        <ellipse class="petal" cx="0" cy="24" rx="6" ry="12" transform="rotate(180)" style="animation-delay: 1.6s;"/>
+                        <ellipse class="petal" cx="-17" cy="17" rx="6" ry="12" transform="rotate(225)" style="animation-delay: 1.65s;"/>
+                        <ellipse class="petal" cx="-24" cy="0" rx="6" ry="12" transform="rotate(270)" style="animation-delay: 1.7s;"/>
+                        <ellipse class="petal" cx="-17" cy="-17" rx="6" ry="12" transform="rotate(315)" style="animation-delay: 1.75s;"/>
+                    </g>
+                </g>
+
+                <!-- Flor Derecha -->
+                <g transform="translate(210, 120)">
+                    <circle class="center-flower" cx="0" cy="0" r="16" fill="#5c3d11"/>
+                    <g fill="#ffc300">
+                        <ellipse class="petal" cx="0" cy="-24" rx="6" ry="12" style="animation-delay: 1.4s;"/>
+                        <ellipse class="petal" cx="17" cy="-17" rx="6" ry="12" transform="rotate(45)" style="animation-delay: 1.45s;"/>
+                        <ellipse class="petal" cx="24" cy="0" rx="6" ry="12" transform="rotate(90)" style="animation-delay: 1.5s;"/>
+                        <ellipse class="petal" cx="17" cy="17" rx="6" ry="12" transform="rotate(135)" style="animation-delay: 1.55s;"/>
+                        <ellipse class="petal" cx="0" cy="24" rx="6" ry="12" transform="rotate(180)" style="animation-delay: 1.6s;"/>
+                        <ellipse class="petal" cx="-17" cy="17" rx="6" ry="12" transform="rotate(225)" style="animation-delay: 1.65s;"/>
+                        <ellipse class="petal" cx="-24" cy="0" rx="6" ry="12" transform="rotate(270)" style="animation-delay: 1.7s;"/>
+                        <ellipse class="petal" cx="-17" cy="-17" rx="6" ry="12" transform="rotate(315)" style="animation-delay: 1.75s;"/>
+                    </g>
+                </g>
+
+                <!-- Flor Central (Principal - Más grande) -->
+                <g transform="translate(150, 100)">
+                    <circle class="center-flower" cx="0" cy="0" r="24" fill="#3d2305" stroke="#ffb703" stroke-width="2"/>
+                    <g fill="#ffd700">
+                        <ellipse class="petal" cx="0" cy="-35" rx="9" ry="18" style="animation-delay: 1.6s;"/>
+                        <ellipse class="petal" cx="24" cy="-24" rx="9" ry="18" transform="rotate(45)" style="animation-delay: 1.65s;"/>
+                        <ellipse class="petal" cx="35" cy="0" rx="9" ry="18" transform="rotate(90)" style="animation-delay: 1.7s;"/>
+                        <ellipse class="petal" cx="24" cy="24" rx="9" ry="18" transform="rotate(135)" style="animation-delay: 1.75s;"/>
+                        <ellipse class="petal" cx="0" cy="35" rx="9" ry="18" transform="rotate(180)" style="animation-delay: 1.8s;"/>
+                        <ellipse class="petal" cx="-24" cy="24" rx="9" ry="18" transform="rotate(225)" style="animation-delay: 1.85s;"/>
+                        <ellipse class="petal" cx="-35" cy="0" rx="9" ry="18" transform="rotate(270)" style="animation-delay: 1.9s;"/>
+                        <ellipse class="petal" cx="-24" cy="-24" rx="9" ry="18" transform="rotate(315)" style="animation-delay: 1.95s;"/>
+                    </g>
+                </g>
+            </svg>
+
+            <!-- Mensaje Especial -->
+            <div class="letter-card">
+                <h1 class="letter-title">¡Flores amarillas para ti!</h1>
+                <p class="letter-body">
+                    Para recordarte lo especial que eres para mí y llenar tu día de luz, alegría y los mejores momentos.
+                </p>
+                <div class="letter-heart">💛✨</div>
+            </div>
+        </div>
     </div>
-    <button class="btn-open" onclick="openCard()">Abrir 💛</button>
-  </div>
 
-  <!-- PANTALLA DE LAS FLORES -->
-  <div class="flowers-screen" id="flowersScreen">
-    <div class="svg-container">
-      <svg viewBox="0 0 300 300" width="100%" height="100%">
-        <!-- Hojas y tallos -->
-        <path d="M150 220 Q120 240 100 270" stroke="#4a7c59" stroke-width="8" fill="none" stroke-linecap="round"/>
-        <path d="M150 220 Q180 240 200 270" stroke="#4a7c59" stroke-width="8" fill="none" stroke-linecap="round"/>
-        <path d="M150 220 L150 280" stroke="#385e43" stroke-width="10" fill="none" stroke-linecap="round"/>
-        
-        <path d="M110 240 Q70 230 60 210 Q90 200 120 220" fill="#5c8a67"/>
-        <path d="M190 240 Q230 230 240 210 Q210 200 180 220" fill="#5c8a67"/>
+    <script>
+        // Animación de apertura
+        function openLetter() {
+            const container = id('mainContainer');
+            container.classList.add('open');
 
-        <!-- Girasol Principal (Centro) -->
-        <g transform="translate(150, 150)">
-          <!-- Pétalos -->
-          <g fill="#ffd700">
-            <ellipse rx="14" ry="45" transform="rotate(0)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(30)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(60)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(90)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(120)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(150)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(180)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(210)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(240)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(270)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(300)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(330)" y="-35"/>
-          </g>
-          <g fill="#ffae00">
-            <ellipse rx="10" ry="38" transform="rotate(15)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(45)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(75)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(105)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(135)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(165)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(195)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(225)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(255)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(285)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(315)" y="-30"/>
-            <ellipse rx="10" ry="38" transform="rotate(345)" y="-30"/>
-          </g>
-          <!-- Centro -->
-          <circle r="30" fill="#3d2314"/>
-          <circle r="25" fill="#2b180d"/>
-        </g>
+            // Lanzar confeti dorado y pétalos después de abrir
+            setTimeout(() => {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ffd700', '#ffb703', '#ffffff', '#ff85a1']
+                });
+            }, 600);
+        }
 
-        <!-- Girasol Izquierdo -->
-        <g transform="translate(90, 110) scale(0.75)">
-          <g fill="#ffd700">
-            <ellipse rx="14" ry="45" transform="rotate(0)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(45)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(90)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(135)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(180)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(225)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(270)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(315)" y="-35"/>
-          </g>
-          <circle r="26" fill="#3d2314"/>
-        </g>
+        function id(name) {
+            return document.getElementById(name);
+        }
 
-        <!-- Girasol Derecho -->
-        <g transform="translate(210, 110) scale(0.75)">
-          <g fill="#ffd700">
-            <ellipse rx="14" ry="45" transform="rotate(0)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(45)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(90)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(135)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(180)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(225)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(270)" y="-35"/>
-            <ellipse rx="14" ry="45" transform="rotate(315)" y="-35"/>
-          </g>
-          <circle r="26" fill="#3d2314"/>
-        </g>
-      </svg>
-    </div>
-    <h1>¡Flores amarillas para ti! 💛✨</h1>
-  </div>
+        // Fondo con partículas brillantes (Luciérnagas)
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
 
-  <script>
-    function openCard() {
-      const cardScreen = document.getElementById('cardScreen');
-      const flowersScreen = document.getElementById('flowersScreen');
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
 
-      cardScreen.style.opacity = '0';
-      cardScreen.style.transform = 'scale(0.8)';
+        const particles = [];
+        for (let i = 0; i < 40; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2 + 1,
+                alpha: Math.random(),
+                speed: Math.random() * 0.5 + 0.2
+            });
+        }
 
-      setTimeout(() => {
-        cardScreen.style.display = 'none';
-        flowersScreen.classList.add('active');
-        createSparkles();
-      }, 800);
-    }
-
-    function createSparkles() {
-      for (let i = 0; i < 35; i++) {
-        setTimeout(() => {
-          const sparkle = document.createElement('div');
-          sparkle.className = 'sparkle';
-          
-          const size = Math.random() * 8 + 4;
-          sparkle.style.width = size + 'px';
-          sparkle.style.height = size + 'px';
-          
-          sparkle.style.left = Math.random() * 100 + 'vw';
-          sparkle.style.top = (Math.random() * 50 + 50) + 'vh';
-          
-          sparkle.style.animationDuration = (Math.random() * 2 + 2) + 's';
-          
-          document.body.appendChild(sparkle);
-
-          setTimeout(() => sparkle.remove(), 4000);
-        }, i * 120);
-      }
-    }
-  </script>
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.y -= p.speed;
+                if (p.y < 0) p.y = canvas.height;
+                
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 215, 0, ${Math.abs(Math.sin(p.alpha))})`;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ffd700';
+                ctx.fill();
+                p.alpha += 0.02;
+            });
+            requestAnimationFrame(drawParticles);
+        }
+        drawParticles();
+    </script>
 </body>
 </html>
